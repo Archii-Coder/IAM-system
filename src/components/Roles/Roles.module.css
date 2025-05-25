@@ -1,0 +1,11 @@
+.container {
+  & > *:not(:last-child) {
+    margin-bottom: 2rem;
+  }
+}
+
+/* .container {
+  & > * {
+    margin-bottom: 1rem;
+  }
+} */
