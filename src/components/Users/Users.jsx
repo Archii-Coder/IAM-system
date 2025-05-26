@@ -8,12 +8,14 @@ const Container = styled.div`
   align-content: flex-start;
 `;
 
-const Users = ({ identities = [] }) => (
+const Users = ({ identities = [], placeholder, onDragIdentity }) => (
   <Container>
     {identities.map((identity) => (
-      <User key={identity}>{identity}</User>
+      <User onDragStart={() => onDragIdentity(identity)} key={identity}>
+        {identity}
+      </User>
     ))}
+    {placeholder && <User isPlaceholder>{placeholder}</User>}
   </Container>
 );
-
 export default Users;
