@@ -1,5 +1,5 @@
-import { useState } from "react";
-import styled, { css } from "styled-components";
+import { useEffect, useState, useRef } from "react";
+import styled from "styled-components";
 
 const Wrapper = styled.span`
   cursor: pointer;
@@ -11,40 +11,60 @@ const Wrapper = styled.span`
   &:hover {
     background-color: #f3f4f6;
   }
-
-  ${({ mousePosition }) => {
-    if (!mousePosition) {
-      return null;
-    }
-
-    return css`
-      position: fixed;
-      top: ${mousePosition}px;
-      lett: ${mousePosition}px;
-    `;
-  }}
 `;
 
 const User = ({ children }) => {
-  const [isDragging, setIsDragging] = useState(false);
   const [dragPosition, setDragPosition] = useState(null);
+
+  const offsetRef = useRef(null);
+
+  useEffect(() => {
+    const handleMouseMove = (event) => {
+      if (!offsetRef.current) {
+        return;
+      }
+
+      const offset = offsetRef.current;
+
+      setDragPosition({
+        x: event.clientX - offset.left,
+        y: event.clientY - offset.top,
+      });
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+    };
+  }, []);
 
   return (
     <Wrapper
-      draggable
-      onMouseDown={() => setIsDragging(true)}
-      onMouseMove={(event) => {
-        if (!isDragging) {
-          return;
-        }
+      onMouseDown={(event) => {
+        event.preventDefault();
 
-        setDragPosition({
-          x: event.pageX,
-          y: event.pageY,
-        });
+        const element = event.target;
+        const domRect = element.getBoundingClientRect();
+
+        offsetRef.current = {
+          left: event.clientX - domRect.left,
+          top: event.clientY - domRect.top,
+        };
       }}
-      onMouseUp={() => setIsDragging(false)}
-      dragPosition={dragPosition}
+      onMouseUp={() => {
+        offsetRef.current = null;
+        setDragPosition(null);
+      }}
+      style={
+        dragPosition
+          ? {
+              position: "fixed",
+              top: `${dragPosition.y}px`,
+              left: `${dragPosition.x}px`,
+            }
+          : {}
+      }
     >
       {children}
     </Wrapper>
