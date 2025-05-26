@@ -1,8 +1,8 @@
 import NewIAM from "./components/NewIAM";
 
-const Header = () => (
+const Header = ({ onNewIAMClick }) => (
   <div className="border-b border-gray-300 py-4">
-    <NewIAM />
+    <NewIAM onClick={onNewIAMClick} />
   </div>
 );
 
