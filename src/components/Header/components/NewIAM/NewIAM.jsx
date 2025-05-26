@@ -1,5 +1,6 @@
-const NewIAM = () => (
+const NewIAM = ({ onClick }) => (
   <button
+    onClick={onClick}
     className="
         block ml-auto
         cursor-pointer

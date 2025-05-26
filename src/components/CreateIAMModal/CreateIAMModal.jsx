@@ -1,4 +1,5 @@
 import styled, { css } from "styled-components";
+import { useState } from "react";
 
 const Button = styled.button`
   cursor: pointer;
@@ -29,24 +30,58 @@ const Button = styled.button`
   }}
 `;
 
-const CreateIAMModal = () => (
-  <div className="fixed inset-0 bg-black/80 flex items-center justify-center">
-    <div className="bg-white p-6 rounded-lg space-y-4">
-      <div className="mb-4 text-lg">Create IAM</div>
-      <select className="border rounded-md border-gray-300 p-2 w-full">
-        <option value="role">Role</option>
-        <option value="user">User</option>
-      </select>
-      <input
-        className="border rounded-md border-gray-300 p-2 w-full"
-        placeholder="Enter IAM name"
-      />
-      <div className="flex justify-end gap-2">
-        <Button variant="secondary">Cancel</Button>
-        <Button>Create</Button>
-      </div>
+const CreateIAMModal = ({ isOpen, onClose, onCreateUser, onCreateRole }) => {
+  const [type, setType] = useState("role");
+  const [name, setName] = useState("");
+
+  if (!isOpen) {
+    return;
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/80 flex items-center justify-center">
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+
+          if (type === "user") {
+            onCreateUser(name);
+          }
+
+          if (type === "role") {
+            onCreateRole(name);
+          }
+
+          setName("");
+
+          onClose();
+        }}
+        className="bg-white p-6 rounded-lg space-y-4"
+      >
+        <div className="mb-4 text-lg">Create IAM</div>
+        <select
+          onChange={(event) => setType(event.target.value)}
+          value={type}
+          className="border rounded-md border-gray-300 p-2 w-full"
+        >
+          <option value="role">Role</option>
+          <option value="user">User</option>
+        </select>
+        <input
+          onChange={(event) => setName(event.target.value)}
+          value={name}
+          placeholder="Enter IAM name"
+          className="border rounded-md border-gray-300 p-2 w-full"
+        />
+        <div className="flex justify-end gap-2">
+          <Button type="button" variant="secondary" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button type="submit">Create</Button>
+        </div>
+      </form>
     </div>
-  </div>
-);
+  );
+};
 
 export default CreateIAMModal;

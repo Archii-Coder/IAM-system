@@ -1,23 +1,11 @@
 import Role from "./components/Role";
 import styles from "./Roles.module.css";
 
-const Roles = () => (
+const Roles = ({ authorizations }) => (
   <div className={styles.container}>
-    <Role
-      name="User"
-      child={{
-        name: "System Manager",
-        users: ["Daisy", "Lily", "Rose"],
-        child: {
-          name: "Admin",
-          users: ["Violet", "David", "Dean"],
-        },
-      }}
-      users={["Alice", "Bob", "Sam", "Dick", "Sean", "Vivian", "Melbourne"]}
-    />
-
-    <Role name="Service" users={["Jane", "Emily", "Joe"]} />
+    {authorizations.map(({ name, child, identities }) => (
+      <Role key={name} name={name} child={child} identities={identities} />
+    ))}
   </div>
 );
-
 export default Roles;

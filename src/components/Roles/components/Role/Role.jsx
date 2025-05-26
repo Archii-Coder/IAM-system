@@ -1,14 +1,14 @@
 import Users from "../../../Users";
 import styles from "./Role.module.css";
 
-const Role = ({ name, users, child }) => (
+const Role = ({ name, identities, child }) => (
   <div className={styles.container}>
     <div className={styles.name}>{name}</div>
     <div className="flex gap-4">
       {child && (
-        <Role child={child.child} name={child.name} users={child.users} />
+        <Role child={child.child} name={child.name} users={child.identities} />
       )}
-      <Users data={users} />
+      <Users identities={identities} />
     </div>
   </div>
 );

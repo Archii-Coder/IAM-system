@@ -19,10 +19,10 @@ const User = styled.button`
   }
 `;
 
-const Users = ({ data = [] }) => (
+const Users = ({ identities = [] }) => (
   <Container>
-    {data.map((user) => (
-      <User key={user}>{user}</User>
+    {identities.map((identity) => (
+      <User key={identity}>{identity}</User>
     ))}
   </Container>
 );
