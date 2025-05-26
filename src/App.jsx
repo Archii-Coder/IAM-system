@@ -8,7 +8,7 @@ const App = () => {
   const [isCreateIAMModalOpen, setIsCreateIAMModalOpen] = useState(false);
   const [identities, setIdentities] = useState([]);
 
-  const [placeholder, setPlaceholder] = useState(null);
+  const [identityPlaceholder, setIdentityPlaceholder] = useState(null);
 
   const [authorizations, setAuthorizations] = useState([
     {
@@ -29,31 +29,62 @@ const App = () => {
       <div className="flex mt-8 gap-8">
         <div className="basis-2/3">
           <Roles
-            placeholder={placeholder}
+            onDragIdentity={(role, identity) =>
+              setIdentityPlaceholder({
+                source: role,
+                value: identity,
+              })
+            }
+            identityPlaceholder={identityPlaceholder}
             authorizations={authorizations}
             onUpdateRole={(name) => {
               setAuthorizations((previousState) =>
-                previousState.map((role) => {
-                  if (role.name !== name) {
-                    return role;
+                previousState.map((authorization) => {
+                  if (
+                    identityPlaceholder.source !== "UnassignedUsers" &&
+                    identityPlaceholder.source === authorization.name
+                  ) {
+                    return {
+                      ...authorization,
+                      identities: authorization.identities.filter(
+                        (identity) => identity !== identityPlaceholder.value
+                      ),
+                    };
+                  }
+
+                  if (authorization.name !== name) {
+                    return authorization;
                   }
 
                   return {
-                    ...role,
-                    identities: [...role.identities, placeholder],
+                    ...authorization,
+                    identities: [
+                      ...authorization.identities,
+                      identityPlaceholder.value,
+                    ],
                   };
                 })
               );
 
+              if (identityPlaceholder.source !== "UnassignedUsers") {
+                return;
+              }
               setIdentities((previousState) =>
-                previousState.filter((identity) => identity !== placeholder)
+                previousState.filter(
+                  (identity) => identity !== identityPlaceholder.value
+                )
               );
             }}
           />
         </div>
         <div className="basis-1/3">
           <UnassignedUsers
-            onDragIdentity={(identity) => setPlaceholder(identity)}
+            onDragIdentity={(identity) =>
+              setIdentityPlaceholder({
+                source: "UnassignedUsers",
+                value: identity,
+              })
+            }
             identities={identities}
           />
         </div>

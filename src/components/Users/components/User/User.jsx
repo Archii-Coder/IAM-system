@@ -1,6 +1,6 @@
 import clsx from "clsx";
 
-const User = ({ onDragStart, children, isPlaceholder = false }) => (
+const User = ({ onDragStart, isPlaceholder = false, children }) => (
   <span
     className={clsx(
       "cursor-grab bg-white p-2 border border-gray-300 rounded-md ",

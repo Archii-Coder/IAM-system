@@ -15,7 +15,7 @@ const Users = ({ identities = [], placeholder, onDragIdentity }) => (
         {identity}
       </User>
     ))}
-    {placeholder && <User isPlaceholder>{placeholder}</User>}
+    {placeholder && <User isPlaceholder>{placeholder.value}</User>}
   </Container>
 );
 export default Users;

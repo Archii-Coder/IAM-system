@@ -2,7 +2,14 @@ import { useState } from "react";
 import Users from "../../../Users";
 import styles from "./Role.module.css";
 
-const Role = ({ name, identities, child, placeholder, onUpdate }) => {
+const Role = ({
+  name,
+  identities,
+  child,
+  onDragIdentity,
+  identityPlaceholder,
+  onUpdate,
+}) => {
   const [isDraggingOver, setIsDraggingOver] = useState(false);
 
   return (
@@ -38,7 +45,8 @@ const Role = ({ name, identities, child, placeholder, onUpdate }) => {
           />
         )}
         <Users
-          placeholder={isDraggingOver && placeholder}
+          onDragIdentity={onDragIdentity}
+          placeholder={isDraggingOver && identityPlaceholder}
           identities={identities}
         />
       </div>
