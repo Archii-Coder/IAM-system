@@ -3,6 +3,7 @@
   border-radius: var(--border-radius-lg);
   padding: 16px;
   width: fit-content;
+  cursor: grab;
 }
 
 .name {
