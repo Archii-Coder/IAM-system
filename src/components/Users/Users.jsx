@@ -1,21 +1,23 @@
-import styled from "styled-components";
 import User from "./components/User";
+import DropZone from "../DropZone";
 
-const Container = styled.div`
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  align-content: flex-start;
-`;
-
-const Users = ({ identities = [], placeholder, onDragIdentity }) => (
-  <Container>
+const Users = ({ identities, placeholder, onDragIdentity, onDrop }) => (
+  <DropZone
+    className="flex gap-2 flex-wrap align-content-start items-start min-h-[50px] min-w-[200px]"
+    isDroppable={placeholder?.type === "user"}
+    preview={
+      placeholder?.type === "user" && (
+        <User isPlaceholder>{placeholder.value}</User>
+      )
+    }
+    onDrop={onDrop}
+  >
     {identities.map((identity) => (
       <User onDragStart={() => onDragIdentity(identity)} key={identity}>
         {identity}
       </User>
     ))}
-    {placeholder && <User isPlaceholder>{placeholder.value}</User>}
-  </Container>
+  </DropZone>
 );
+
 export default Users;

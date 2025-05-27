@@ -8,7 +8,7 @@ const App = () => {
   const [isCreateIAMModalOpen, setIsCreateIAMModalOpen] = useState(false);
   const [identities, setIdentities] = useState([]);
 
-  const [identityPlaceholder, setIdentityPlaceholder] = useState(null);
+  const [isDraggingIAM, setIsDraggingIAM] = useState(null);
 
   const [authorizations, setAuthorizations] = useState([
     {
@@ -29,25 +29,30 @@ const App = () => {
       <div className="flex mt-8 gap-8">
         <div className="basis-2/3">
           <Roles
+            placeholder={isDraggingIAM}
+            authorizations={authorizations}
             onDragIdentity={(role, identity) =>
-              setIdentityPlaceholder({
+              setIsDraggingIAM({
+                type: "user",
                 source: role,
                 value: identity,
               })
             }
-            identityPlaceholder={identityPlaceholder}
-            authorizations={authorizations}
-            onUpdateRole={(name) => {
+            onDropIdentity={(name) => {
+              if (isDraggingIAM.type !== "user") {
+                return;
+              }
+
               setAuthorizations((previousState) =>
                 previousState.map((authorization) => {
                   if (
-                    identityPlaceholder.source !== "UnassignedUsers" &&
-                    identityPlaceholder.source === authorization.name
+                    isDraggingIAM.source !== "UnassignedUsers" &&
+                    isDraggingIAM.source === authorization.name
                   ) {
                     return {
                       ...authorization,
                       identities: authorization.identities.filter(
-                        (identity) => identity !== identityPlaceholder.value
+                        (identity) => identity !== isDraggingIAM.value
                       ),
                     };
                   }
@@ -60,19 +65,45 @@ const App = () => {
                     ...authorization,
                     identities: [
                       ...authorization.identities,
-                      identityPlaceholder.value,
+                      isDraggingIAM.value,
                     ],
                   };
                 })
               );
 
-              if (identityPlaceholder.source !== "UnassignedUsers") {
+              if (isDraggingIAM.source !== "UnassignedUsers") {
                 return;
               }
               setIdentities((previousState) =>
                 previousState.filter(
-                  (identity) => identity !== identityPlaceholder.value
+                  (identity) => identity !== isDraggingIAM.value
                 )
+              );
+            }}
+            onDragRole={(source, role) =>
+              setIsDraggingIAM({ type: "role", source, value: role })
+            }
+            onDropRole={(target) => {
+              if (!isDraggingIAM.type === "role") {
+                return;
+              }
+
+              setAuthorizations((previousState) =>
+                previousState
+                  .filter(
+                    (authorization) =>
+                      authorization.name !== isDraggingIAM.source
+                  )
+                  .map((authorization) => {
+                    if (authorization.name !== target) {
+                      return authorization;
+                    }
+
+                    return {
+                      ...authorization,
+                      child: isDraggingIAM.value,
+                    };
+                  })
               );
             }}
           />
@@ -80,7 +111,8 @@ const App = () => {
         <div className="basis-1/3">
           <UnassignedUsers
             onDragIdentity={(identity) =>
-              setIdentityPlaceholder({
+              setIsDraggingIAM({
+                type: "user",
                 source: "UnassignedUsers",
                 value: identity,
               })

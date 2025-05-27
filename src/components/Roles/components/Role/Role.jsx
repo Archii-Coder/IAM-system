@@ -1,39 +1,33 @@
-import { useState } from "react";
 import Users from "../../../Users";
 import styles from "./Role.module.css";
+import DropZone from "../../../DropZone";
+import Draggable from "../../../Draggable";
 
 const Role = ({
   name,
   identities,
   child,
   onDragIdentity,
-  identityPlaceholder,
-  onUpdate,
-}) => {
-  const [isDraggingOver, setIsDraggingOver] = useState(false);
-
-  return (
-    <div
-      onDragOver={(event) => {
-        event.preventDefault();
-        console.log("onDragEnter");
-
-        setIsDraggingOver(true);
-      }}
-      onDragLeave={(event) => {
-        event.preventDefault();
-
-        setIsDraggingOver(false);
-      }}
-      onDrop={(event) => {
-        event.preventDefault();
-        console.log("onDrop");
-
-        setIsDraggingOver(null);
-
-        onUpdate();
-      }}
-      className={styles.container}
+  onDragStart,
+  onDrop,
+  placeholder,
+  onDropIdentity,
+}) => (
+  <Draggable onDragStart={onDragStart} className={styles.container}>
+    <DropZone
+      isDroppable={placeholder?.type === "role"}
+      onDrop={onDrop}
+      preview={
+        placeholder?.type === "role" &&
+        placeholder.source !== name && (
+          <Role
+            isPlaceholder
+            name={placeholder.value.name}
+            identities={placeholder.value.identities}
+            child={placeholder.value.child}
+          />
+        )
+      }
     >
       <div className={styles.name}>{name}</div>
       <div className="flex gap-4">
@@ -41,16 +35,19 @@ const Role = ({
           <Role
             child={child.child}
             name={child.name}
-            users={child.identities}
+            identities={child.identities}
           />
         )}
+
         <Users
           onDragIdentity={onDragIdentity}
-          placeholder={isDraggingOver && identityPlaceholder}
+          placeholder={placeholder}
           identities={identities}
+          onDrop={onDropIdentity}
         />
       </div>
-    </div>
-  );
-};
+    </DropZone>
+  </Draggable>
+);
+
 export default Role;
