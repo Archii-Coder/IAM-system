@@ -1,5 +1,6 @@
 import styled, { css } from "styled-components";
 import { useState } from "react";
+import { useIAM } from "../IAM";
 
 const Button = styled.button`
   cursor: pointer;
@@ -30,9 +31,11 @@ const Button = styled.button`
   }}
 `;
 
-const CreateIAMModal = ({ isOpen, onClose, onCreateUser, onCreateRole }) => {
+const CreateIAMModal = ({ isOpen, onClose }) => {
   const [type, setType] = useState("role");
   const [name, setName] = useState("");
+
+  const { setIdentities, setAuthorizations } = useIAM();
 
   if (!isOpen) {
     return;
@@ -45,11 +48,14 @@ const CreateIAMModal = ({ isOpen, onClose, onCreateUser, onCreateRole }) => {
           event.preventDefault();
 
           if (type === "user") {
-            onCreateUser(name);
+            setIdentities((previousState) => [...previousState, name]);
           }
 
           if (type === "role") {
-            onCreateRole(name);
+            setAuthorizations((previousState) => [
+              ...previousState,
+              { name, identities: [] },
+            ]);
           }
 
           setName("");

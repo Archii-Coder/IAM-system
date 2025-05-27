@@ -40,6 +40,7 @@ const Role = ({
         )}
 
         <Users
+          role={name}
           onDragIdentity={onDragIdentity}
           placeholder={placeholder}
           identities={identities}
